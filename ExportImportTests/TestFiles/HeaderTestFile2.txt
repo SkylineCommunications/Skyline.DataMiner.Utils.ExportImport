@@ -1,0 +1,4 @@
+﻿Column 1;Column2;Column 3
+
+Test Value 1;TestValue2;{ ""name"" = ""Foo"" }
+Test Value 1.1;TestValue2.1;{ ""name"" = ""Bar"" }

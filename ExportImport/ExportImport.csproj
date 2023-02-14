@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net462</TargetFramework>
+    <RootNamespace>Skyline.DataMiner.Utils.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <AssemblyName>Skyline.DataMiner.Utils.$(MSBuildProjectName.Replace(" ", "_"))</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+  </ItemGroup>
+
+</Project>
