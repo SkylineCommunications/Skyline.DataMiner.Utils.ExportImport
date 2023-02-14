@@ -8,11 +8,32 @@
 
 	using Skyline.DataMiner.Utils.ExportImport.Attributes;
 	using Skyline.DataMiner.Utils.ExportImport.Exceptions;
+	using Skyline.DataMiner.Utils.ExportImport.Factories;
 	using Skyline.DataMiner.Utils.ExportImport.Readers;
+	using Skyline.DataMiner.Utils.ExportImport.Writers;
 
 	[TestClass]
 	public class CsvReaderTests
 	{
+		public class DataRow
+		{
+			
+		}
+
+		public void Test(string filePath)
+		{
+			List<DataRow> rows = new List<DataRow>();
+
+			//Reader<DataRow> reader = ReaderFactory.GetReader<DataRow>(filePath);
+			//List<DataRow> rows = reader.Read();
+
+			//Writer<DataRow> writer = WriterFactory.GetWriter<DataRow>(filePath);
+			//writer.Write(rows);
+
+			var writer = new CsvWriter<DataRow>(filePath);
+			writer.Write(rows);
+		}
+
 		/*
 		 * Make sure that the 'Copy to Output Directory' for the test files is set to 'Copy always'.
 		 */

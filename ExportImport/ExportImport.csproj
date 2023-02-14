@@ -1,13 +1,40 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net462</TargetFramework>
-    <RootNamespace>Skyline.DataMiner.Utils.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
-    <AssemblyName>Skyline.DataMiner.Utils.$(MSBuildProjectName.Replace(" ", "_"))</AssemblyName>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<RootNamespace>Skyline.DataMiner.Utils.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+		<AssemblyName>Skyline.DataMiner.Utils.$(MSBuildProjectName.Replace(" ", "_"))</AssemblyName>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<Authors>SkylineCommunications</Authors>
+		<Company>Skyline Communications</Company>
+		<PackageTags>Skyline;DataMiner;ExportImport;CSV;JSON;XML</PackageTags>
+		<PackageIcon>Icon.png</PackageIcon>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+		<PackageProjectUrl>https://skyline.be</PackageProjectUrl>
+		<Description>Library providing methods to export or import data for a list of objects.
+ReadMe will show how to start.</Description>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-  </ItemGroup>
+	<ItemGroup>
+	  <None Include="..\_NuGetItems\Icon.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\_NuGetItems\LICENSE.txt">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+		<None Update="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+	</ItemGroup>
 
 </Project>
