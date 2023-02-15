@@ -18,6 +18,9 @@
 	{
 		private static char? separator;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CsvReader{T}"></see> class.
+		/// </summary>
 		public CsvReader(string fullPath) : base(fullPath)
 		{
 		}

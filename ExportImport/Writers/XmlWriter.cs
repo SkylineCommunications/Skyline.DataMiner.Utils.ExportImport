@@ -11,6 +11,9 @@
 	/// <typeparam name="T">Type of the data row.</typeparam>
 	public class XmlWriter<T> : Writer<T> where T : class, new()
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="XmlWriter{T}"></see> class.
+		/// </summary>
 		public XmlWriter(string fullPath) : base(fullPath)
 		{
 		}

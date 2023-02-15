@@ -11,6 +11,9 @@
 	/// <typeparam name="T">Type of the data row.</typeparam>
 	public class JsonReader<T> : Reader<T> where T : class, new()
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="JsonReader{T}"></see> class.
+		/// </summary>
 		public JsonReader(string fullPath) : base(fullPath)
 		{
 		}

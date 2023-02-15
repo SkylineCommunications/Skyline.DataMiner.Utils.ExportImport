@@ -16,6 +16,9 @@
 	{
 		private string separator;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CsvWriter{T}"></see> class.
+		/// </summary>
 		public CsvWriter(string fullPath) : base(fullPath)
 		{
 			separator = ";";

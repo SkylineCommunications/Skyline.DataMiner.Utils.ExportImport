@@ -10,6 +10,9 @@
 	/// <typeparam name="T">Type of the data row.</typeparam>
 	public class JsonWriter<T> : Writer<T> where T : class, new()
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="JsonWriter{T}"></see> class.
+		/// </summary>
 		public JsonWriter(string fullPath) : base(fullPath)
 		{
 		}

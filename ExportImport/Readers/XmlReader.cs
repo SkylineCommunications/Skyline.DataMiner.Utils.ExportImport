@@ -12,6 +12,9 @@
 	/// <typeparam name="T">Type of the data row.</typeparam>
 	public class XmlReader<T> : Reader<T> where T : class, new()
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="XmlReader{T}"></see> class.
+		/// </summary>
 		public XmlReader(string fullPath) : base(fullPath)
 		{
 		}

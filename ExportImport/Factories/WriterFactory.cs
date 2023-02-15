@@ -5,6 +5,9 @@
 
 	using Skyline.DataMiner.Utils.ExportImport.Writers;
 
+	/// <summary>
+	/// Starting point to write files.
+	/// </summary>
 	public static class WriterFactory
 	{
 		/// <summary>

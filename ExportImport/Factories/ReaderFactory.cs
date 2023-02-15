@@ -5,6 +5,9 @@
 
 	using Skyline.DataMiner.Utils.ExportImport.Readers;
 
+	/// <summary>
+	/// Starting point to read out files.
+	/// </summary>
 	public static class ReaderFactory
 	{
 		/// <summary>
