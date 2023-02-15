@@ -1,5 +1,7 @@
 # Skyline.DataMiner.Utils.ExportImport
 
+[![DataMiner CICD NuGet Solution](https://github.com/SkylineCommunications/Skyline.DataMiner.Utils.ExportImport/actions/workflows/dataminer-cicd-nugetsolution.yml/badge.svg)](https://github.com/SkylineCommunications/Skyline.DataMiner.Utils.ExportImport/actions/workflows/dataminer-cicd-nugetsolution.yml)
+
 ## About
 
 ### About Skyline.DataMiner.Utils.ExportImport Packages
