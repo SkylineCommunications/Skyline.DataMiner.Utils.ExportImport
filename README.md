@@ -8,7 +8,7 @@ Skyline.DataMiner.Utils.ExportImport Packages are NuGets available in the public
 
 They allow to easily export and import data in a CSV, JSON or XML format.
 
-> [!IMPORTANT]
+> **Warning**
 > Prior to DataMiner 10.1.11 (RN 30755), when a .NET Standard 2.0 NuGet is used in a QAction or EXE, you need to manually add a reference to .NET Standard.
 >
 > ```xml
@@ -31,7 +31,7 @@ The foundation of DataMiner is its powerful and versatile data acquisition and c
 
 A unique catalog of 7000+ connectors already exist. In addition, you can leverage DataMiner Development Packages to build you own connectors (also known as "protocols" or "drivers").
 
-> [!TIP]
+> **Note**
 > See also: [About DataMiner](https://aka.dataminer.services/about-dataminer)
 
 ### About Skyline Communications
@@ -44,7 +44,7 @@ The "DataMiner Integration Studio" Visual Studio extension is required for devel
 
 See [Installing DataMiner Integration Studio](https://aka.dataminer.services/DisInstallation)
 
-> [!IMPORTANT]
+> **Warning**
 > NuGets are mandatory to be installed with PackageReferences. DIS was redesigned to work with PackageReferences and be future-proof. 
 >
 > For more information on how to migrate from packages.config to PackageReferences, see [docs.microsoft.com](https://docs.microsoft.com/en-us/nuget/consume-packages/migrate-packages-config-to-package-reference).
@@ -83,5 +83,5 @@ public string Name { get; set; }
 public string Extra { get; set; }
 ```
 
-> [!IMPORTANT]
+> **Warning**
 > Only use either the columns names or the position. If both are used or there are properties without attribute, then a MissingCsvHeaderAttributeWithPositionException will be thrown.
