@@ -24,18 +24,19 @@
 
 			if (String.IsNullOrWhiteSpace(fullPath))
 			{
-				throw new ArgumentException("fullPath can't be empty.");
+				throw new ArgumentException("Value can not be empty.", nameof(fullPath));
 			}
 
 			if (!File.Exists(fullPath))
 			{
-				throw new FileNotFoundException($"File ({fullPath}) doesn't exist.");
+				throw new FileNotFoundException($"File ({fullPath}) doesn't exist.", fullPath);
 			}
 
 			string extension = Path.GetExtension(fullPath);
 
 			switch (extension)
 			{
+				case ".txt":
 				case ".csv":
 					return new CsvReader<T>(fullPath);
 
@@ -46,7 +47,7 @@
 					return new XmlReader<T>(fullPath);
 
 				default:
-					throw new NotSupportedException($"This extension ({extension}) isn't supported.");
+					throw new NotSupportedException($"This extension ({extension}) is not supported.");
 			}
 		}
 	}

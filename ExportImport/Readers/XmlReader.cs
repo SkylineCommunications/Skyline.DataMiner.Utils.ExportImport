@@ -6,12 +6,17 @@
 	using System.Text;
 	using System.Xml.Serialization;
 
+	/// <summary>
+	/// This class will read out a XML file and convert it into a list of the specified type of row.
+	/// </summary>
+	/// <typeparam name="T">Type of the data row.</typeparam>
 	public class XmlReader<T> : Reader<T> where T : class, new()
 	{
 		public XmlReader(string fullPath) : base(fullPath)
 		{
 		}
 
+		/// <inheritdoc cref="Reader{T}.Read"/>
 		public override List<T> Read()
 		{
 			string text = String.Join(Environment.NewLine, GetFileData());

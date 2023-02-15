@@ -8,26 +8,30 @@
 	using Skyline.DataMiner.Utils.ExportImport.Attributes;
 	using Skyline.DataMiner.Utils.ExportImport.Exceptions;
 
+	/// <summary>
+	/// This class will convert the list of data into a CSV file.
+	/// </summary>
+	/// <typeparam name="T">Type of the data row.</typeparam>
 	public class CsvWriter<T> : Writer<T> where T : class, new()
 	{
-		private string _separator;
+		private string separator;
 
 		public CsvWriter(string fullPath) : base(fullPath)
 		{
-			_separator = ";";
+			separator = ";";
 		}
 
 		/// <summary>
-		/// Gets or sets the separator. Default this will be a comma.
+		/// Gets or sets the separator. Default this will be a semicolon.
 		/// </summary>
 		public string Separator
 		{
-			get => _separator;
+			get => separator;
 			set
 			{
 				if (!String.IsNullOrWhiteSpace(value))
 				{
-					_separator = value;
+					separator = value;
 				}
 			}
 		}
@@ -36,6 +40,10 @@
 		/// When the list is empty, a file with only the headers will be created.
 		/// </summary>
 		/// <param name="data">Data to write to the CSV file.</param>
+		/// <exception cref="MissingCsvHeaderAttributeWithPositionException">Property doesn't have a CsvHeaderAttribute with position.</exception>
+		/// <exception cref="InvalidColumnCountException">Invalid Column Count for a specific row.</exception>
+		/// <exception cref="DuplicateHeaderCsvHeaderException">Duplicate header in specified class.</exception>
+		/// <exception cref="DuplicatePositionCsvHeaderException">Duplicate position in specified class.</exception>
 		public override void Write(List<T> data)
 		{
 			if (HasPositionHeaders())

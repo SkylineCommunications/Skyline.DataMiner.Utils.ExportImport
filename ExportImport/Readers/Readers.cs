@@ -4,11 +4,15 @@
 	using System.IO;
 	using System.Text;
 
+	/// <summary>
+	/// This class will read out a file and convert it into a list of the specified type of row.
+	/// </summary>
+	/// <typeparam name="T">Type of the data row.</typeparam>
 	public abstract class Reader<T> where T : class, new()
 	{
 		private readonly string fullPath;
 
-		protected Reader(string fullPath)
+		private protected Reader(string fullPath)
 		{
 			this.fullPath = fullPath;
 		}
@@ -16,11 +20,10 @@
 		/// <summary>
 		/// Reads this file.
 		/// </summary>
-		/// <returns></returns>
-		/// <exception cref="InvalidDataException">Couldn't parse/convert certain values inside the file.</exception>
+		/// <returns>List of rows.</returns>
 		public abstract List<T> Read();
 
-		protected IEnumerable<string> GetFileData()
+		private protected IEnumerable<string> GetFileData()
 		{
 			if (!File.Exists(fullPath))
 			{

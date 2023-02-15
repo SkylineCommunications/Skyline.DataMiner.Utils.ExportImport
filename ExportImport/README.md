@@ -66,4 +66,22 @@ writer.Write(rows);
 ```
 
 Based on the file extension (.csv, .json or .xml) it will return the specific reader/writer.
+
+When exporting/importing to CSV, header attributes should be specified to identify either the name of the column or the position of the column. If there are properties that don't need to be included, they can be ignored with an attribute as well.
+```cs
+[CsvHeader("PK")]
+public string Index { get; set; }
+
+...
+
+[CsvHeader(1)]
+public string Name { get; set; }
+
+...
+
+[CsvIgnore]
+public string Extra { get; set; }
 ```
+
+> [!IMPORTANT]
+> Only use either the columns names or the position. If both are used or there are properties without attribute, then a MissingCsvHeaderAttributeWithPositionException will be thrown.

@@ -10,6 +10,10 @@
 	using Skyline.DataMiner.Utils.ExportImport.Attributes;
 	using Skyline.DataMiner.Utils.ExportImport.Exceptions;
 
+	/// <summary>
+	/// This class will read out a CSV file and convert it into a list of the specified type of row.
+	/// </summary>
+	/// <typeparam name="T">Type of the data row.</typeparam>
 	public class CsvReader<T> : Reader<T> where T : class, new()
 	{
 		private static char? separator;
@@ -18,6 +22,12 @@
 		{
 		}
 
+		/// <inheritdoc cref="Reader{T}.Read"/>
+		/// <exception cref="MissingCsvHeaderAttributeWithPositionException">Property doesn't have a CsvHeaderAttribute with position.</exception>
+		/// <exception cref="InvalidColumnCountException">Invalid Column Count for a specific row.</exception>
+		/// <exception cref="DuplicateHeaderCsvHeaderException">Duplicate header in specified class.</exception>
+		/// <exception cref="DuplicatePositionCsvHeaderException">Duplicate position in specified class.</exception>
+		/// <exception cref="InvalidDataException">Couldn't parse/convert certain values inside the file.</exception>
 		public override List<T> Read()
 		{
 			return HasPositionHeaders() ? ReadViaPositions() : ReadViaHeaders();
@@ -47,48 +57,7 @@
 					throw InvalidColumnCountException.From(columns.Length, i, props.Count);
 				}
 
-				T dto = new T();
-				for (ushort pos = 0; pos < columns.Length; pos++)
-				{
-					// Get HeaderName
-					if (!props.TryGetValue(pos, out PropertyInfo setter))
-					{
-						continue;
-					}
-
-					try
-					{
-						Type t = Nullable.GetUnderlyingType(setter.PropertyType) ?? setter.PropertyType;
-
-						object value;
-						if (String.IsNullOrEmpty(columns[pos]))
-						{
-							value = null;
-						}
-						else
-						{
-							if (setter.PropertyType.IsEnum)
-							{
-								value = Enum.Parse(setter.PropertyType, columns[pos]);
-							}
-							else
-							{
-								value = Convert.ChangeType(columns[pos], t);
-							}
-						}
-
-						setter.SetMethod.Invoke(dto, new object[] { value });
-					}
-					catch (Exception ex)
-					{
-						if (ex is InvalidCastException || ex is FormatException || ex is OverflowException)
-						{
-							throw new InvalidDataException($"Failed to convert the value for header on position {pos} on row {i}", ex);
-						}
-
-						throw;
-					}
-				}
+				T dto = ParseRowBasedOnName(columns, props, i);
 
 				data.Add(dto);
 			}
@@ -130,53 +99,93 @@
 					throw InvalidColumnCountException.From(columns.Length, i, positions.Count);
 				}
 
-				T dto = new T();
-				for (int pos = 0; pos < columns.Length; pos++)
-				{
-					// Get HeaderName
-					if (!positions.TryGetValue(pos, out string name) || !props.TryGetValue(name, out PropertyInfo setter))
-					{
-						continue;
-					}
-
-					try
-					{
-						Type t = Nullable.GetUnderlyingType(setter.PropertyType) ?? setter.PropertyType;
-
-						object value;
-						if (String.IsNullOrEmpty(columns[pos]))
-						{
-							value = null;
-						}
-						else
-						{
-							if (setter.PropertyType.IsEnum)
-							{
-								value = Enum.Parse(setter.PropertyType, columns[pos]);
-							}
-							else
-							{
-								value = Convert.ChangeType(columns[pos], t);
-							}
-						}
-
-						setter.SetMethod.Invoke(dto, new object[] { value });
-					}
-					catch (Exception ex)
-					{
-						if (ex is InvalidCastException || ex is FormatException || ex is OverflowException)
-						{
-							throw new InvalidDataException($"Failed to convert the value for header '{name}' on row {i}", ex);
-						}
-
-						throw;
-					}
-				}
+				T dto = ParseRowBasedOnPosition(columns, positions, props, i);
 
 				data.Add(dto);
 			}
 
 			return data;
+		}
+		private static T ParseRowBasedOnPosition(IReadOnlyList<string> columns, IReadOnlyDictionary<int, string> positions, IReadOnlyDictionary<string, PropertyInfo> props, int rowNumber)
+		{
+			T dto = new T();
+			for (int pos = 0; pos < columns.Count; pos++)
+			{
+				// Get HeaderName
+				if (!positions.TryGetValue(pos, out string name) || !props.TryGetValue(name, out PropertyInfo setter))
+				{
+					continue;
+				}
+
+				try
+				{
+					ParseCell(columns, setter, pos, dto);
+				}
+				catch (Exception ex)
+				{
+					if (ex is InvalidCastException || ex is FormatException || ex is OverflowException)
+					{
+						throw new InvalidDataException($"Failed to convert the value for header '{name}' on row {rowNumber}", ex);
+					}
+
+					throw;
+				}
+			}
+
+			return dto;
+		}
+
+		private static T ParseRowBasedOnName(IReadOnlyList<string> columns, IReadOnlyDictionary<ushort, PropertyInfo> headers, int i)
+		{
+			T dto = new T();
+			for (ushort pos = 0; pos < columns.Count; pos++)
+			{
+				// Get HeaderName
+				if (!headers.TryGetValue(pos, out PropertyInfo setter))
+				{
+					continue;
+				}
+
+				try
+				{
+					ParseCell(columns, setter, pos, dto);
+				}
+				catch (Exception ex)
+				{
+					if (ex is InvalidCastException || ex is FormatException || ex is OverflowException)
+					{
+						throw new InvalidDataException($"Failed to convert the value for header on position {pos} on row {i}", ex);
+					}
+
+					throw;
+				}
+			}
+
+			return dto;
+		}
+
+		private static void ParseCell(IReadOnlyList<string> columns, PropertyInfo setter, int position, T dto)
+		{
+			Type t = Nullable.GetUnderlyingType(setter.PropertyType) ?? setter.PropertyType;
+
+			object value;
+			if (String.IsNullOrEmpty(columns[position]))
+			{
+				value = null;
+			}
+			else
+			{
+				if (setter.PropertyType.IsEnum)
+				{
+					value = Enum.Parse(setter.PropertyType, columns[position]);
+				}
+				else
+				{
+					value = Convert.ChangeType(columns[position], t);
+				}
+			}
+
+			setter.SetMethod.Invoke(dto, new object[] { value });
 		}
 
 		private static bool HasPositionHeaders()
@@ -313,85 +322,82 @@
 			StringBuilder temp = new StringBuilder();
 
 			List<string> parts = new List<string>();
-			bool _stringSection = false;
-			bool _escapeQuote = false;
+			bool stringSection = false;
+			bool escapeQuote = false;
 
-			bool _prevCharIsQuote = false;
-			bool _realCharFound = false;
-			bool _ignoreExtraQuote = false;
+			bool prevCharIsQuote = false;
+			bool realCharFound = false;
+			bool ignoreExtraQuote = false;
 			int pos = 0;
 			foreach (char c in line)
 			{
 				switch (c)
 				{
 					case '"':
-						if (pos + 1 < line.Length)
+						if (pos + 1 < line.Length && line[pos + 1] == '"')
 						{
-							if (line[pos + 1] == '"' /*&& _escapeQuote*/)
-							{
-								// See this char as a real char
+							// See this char as a real char
 
-								// "" is ", """" is ""
-								if (!_ignoreExtraQuote)
+							// "" is ", """" is ""
+							if (!ignoreExtraQuote)
+							{
+								// Check for ,"",  or "", or ,""
+								bool emptyString = false;
+								if (pos + 2 < line.Length)
 								{
-									// Check for ,"",  or "", or ,""
-									bool emptyString = false;
-									if (pos + 2 < line.Length)
+									if (line[pos + 2] == separator && (pos - 1 <= 0 || line[pos - 1] == separator))
 									{
-										if (line[pos + 2] == separator && (pos - 1 <= 0 || line[pos - 1] == separator))
-										{
-											// We have ,"",  or (start) "",
-											// Empty
-											emptyString = true;
-										}
-									}
-									else
-									{
-										// ,"" (end)
+										// We have ,"",  or (start) "",
+										// Empty
 										emptyString = true;
 									}
-
-									if (!emptyString)
-									{
-										temp.Append(c);
-									}
-
-									_ignoreExtraQuote = true;
 								}
 								else
 								{
-									_ignoreExtraQuote = false;
+									// ,"" (end)
+									emptyString = true;
 								}
 
-								_escapeQuote = false;
-								_prevCharIsQuote = false;
-								_realCharFound = true;
+								if (!emptyString)
+								{
+									temp.Append(c);
+								}
+
+								ignoreExtraQuote = true;
 							}
+							else
+							{
+								ignoreExtraQuote = false;
+							}
+
+							escapeQuote = false;
+							prevCharIsQuote = false;
+							realCharFound = true;
 						}
 
-						if (_escapeQuote && _realCharFound)
+						if (escapeQuote && realCharFound)
 						{
 							temp.Append(c);
 						}
 						else
 						{
-							_stringSection = !_stringSection;
+							stringSection = !stringSection;
 						}
 
-						_escapeQuote = !_escapeQuote;
+						escapeQuote = !escapeQuote;
 
-						_prevCharIsQuote = true;
-						_realCharFound = false;
+						prevCharIsQuote = true;
+						realCharFound = false;
 						break;
 
 					default:
-						if (c == separator && !_stringSection)
+						if (c == separator && !stringSection)
 						{
 							parts.Add(temp.ToString());
 							temp.Clear();
-							if (_prevCharIsQuote)
+							if (prevCharIsQuote)
 							{
-								_escapeQuote = false;
+								escapeQuote = false;
 							}
 
 							break;
@@ -399,11 +405,11 @@
 
 						temp.Append(c);
 
-						_escapeQuote = false;
-						_prevCharIsQuote = false;
-						_realCharFound = true;
+						escapeQuote = false;
+						prevCharIsQuote = false;
+						realCharFound = true;
 
-						_ignoreExtraQuote = false;
+						ignoreExtraQuote = false;
 						break;
 				}
 

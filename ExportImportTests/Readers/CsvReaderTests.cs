@@ -1,5 +1,6 @@
 ﻿namespace ExportImportTests.Readers
 {
+	using System;
 	using System.Collections.Generic;
 
 	using FluentAssertions;
@@ -8,32 +9,14 @@
 
 	using Skyline.DataMiner.Utils.ExportImport.Attributes;
 	using Skyline.DataMiner.Utils.ExportImport.Exceptions;
-	using Skyline.DataMiner.Utils.ExportImport.Factories;
 	using Skyline.DataMiner.Utils.ExportImport.Readers;
-	using Skyline.DataMiner.Utils.ExportImport.Writers;
 
 	[TestClass]
+	[DeploymentItem(@"TestFiles\HeaderTestFile.txt")]
+	[DeploymentItem(@"TestFiles\HeaderTestFile2.txt")]
+	[DeploymentItem(@"TestFiles\PositionTestFile.txt")]
 	public class CsvReaderTests
 	{
-		public class DataRow
-		{
-			
-		}
-
-		public void Test(string filePath)
-		{
-			List<DataRow> rows = new List<DataRow>();
-
-			//Reader<DataRow> reader = ReaderFactory.GetReader<DataRow>(filePath);
-			//List<DataRow> rows = reader.Read();
-
-			//Writer<DataRow> writer = WriterFactory.GetWriter<DataRow>(filePath);
-			//writer.Write(rows);
-
-			var writer = new CsvWriter<DataRow>(filePath);
-			writer.Write(rows);
-		}
-
 		/*
 		 * Make sure that the 'Copy to Output Directory' for the test files is set to 'Copy always'.
 		 */
@@ -47,7 +30,7 @@
 				new HeaderRow { Column1 = "Test Value 1.1", Column2 = "TestValue2.1", Column3 = "{ \"name\" = \"Bar\" }" },
 			};
 
-			var reader = new CsvReader<HeaderRow>(@".\TestFiles\HeaderTestFile.txt");
+			var reader = new CsvReader<HeaderRow>("HeaderTestFile.txt");
 
 			List<HeaderRow> rows = reader.Read();
 
@@ -63,7 +46,7 @@
 				new HeaderIgnoredRow { Column1 = "Test Value 1.1", Column2 = null, Column3 = "{ \"name\" = \"Bar\" }" },
 			};
 
-			var reader = new CsvReader<HeaderIgnoredRow>(@".\TestFiles\HeaderTestFile.txt");
+			var reader = new CsvReader<HeaderIgnoredRow>("HeaderTestFile.txt");
 
 			List<HeaderIgnoredRow> rows = reader.Read();
 
@@ -79,7 +62,7 @@
 				new HeaderMissingAttributeRow { Column1 = "Test Value 1.1", Column2 = "TestValue2.1", Column3 = "{ \"name\" = \"Bar\" }" },
 			};
 
-			var reader = new CsvReader<HeaderMissingAttributeRow>(@".\TestFiles\HeaderTestFile2.txt");
+			var reader = new CsvReader<HeaderMissingAttributeRow>("HeaderTestFile2.txt");
 
 			List<HeaderMissingAttributeRow> rows = reader.Read();
 
@@ -95,7 +78,7 @@
 				new PositionRow { Column1 = "Test Value 1.1", Column2 = "TestValue2.1", Column3 = "{ \"name\" = \"Bar\" }" },
 			};
 
-			var reader = new CsvReader<PositionRow>(@".\TestFiles\PositionTestFile.txt");
+			var reader = new CsvReader<PositionRow>("PositionTestFile.txt");
 
 			List<PositionRow> rows = reader.Read();
 
@@ -103,12 +86,23 @@
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(MissingCsvHeaderAttributeWithPositionException))]
 		public void ReadTest_Positions_MissingAttributes()
 		{
-			var reader = new CsvReader<PositionMissingRow>(@".\TestFiles\PositionTestFile.txt");
+			var reader = new CsvReader<PositionMissingRow>("PositionTestFile.txt");
 
-			reader.Read();
+			Action act = () => reader.Read();
+
+			act.Should().ThrowExactly<MissingCsvHeaderAttributeWithPositionException>();
+		}
+
+		[TestMethod]
+		public void ReadTest_CombinationRow()
+		{
+			var reader = new CsvReader<CombinationRow>("PositionTestFile.txt");
+
+			Action act = () => reader.Read();
+
+			act.Should().ThrowExactly<MissingCsvHeaderAttributeWithPositionException>();
 		}
 
 		public class HeaderRow
@@ -166,6 +160,17 @@
 			public string Column2 { get; set; }
 
 			[CsvHeader(2)]
+			public string Column3 { get; set; }
+		}
+
+		public class CombinationRow
+		{
+			[CsvHeader(0)]
+			public string Column1 { get; set; }
+
+			public string Column2 { get; set; }
+
+			[CsvHeader("Column3")]
 			public string Column3 { get; set; }
 		}
 	}

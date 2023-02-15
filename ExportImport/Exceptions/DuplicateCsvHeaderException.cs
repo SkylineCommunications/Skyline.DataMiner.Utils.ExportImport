@@ -24,7 +24,7 @@
 		{
 		}
 
-		public static DuplicateCsvHeaderException From(CsvHeaderAttribute attr, Type @class)
+		internal static DuplicateCsvHeaderException From(CsvHeaderAttribute attr, Type @class)
 		{
 			string message = $"Duplicate attribute values in class '{@class.Name}'";
 			return new DuplicateCsvHeaderException(message);

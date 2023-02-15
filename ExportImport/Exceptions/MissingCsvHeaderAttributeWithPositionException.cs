@@ -23,7 +23,7 @@
 		{
 		}
 
-		public static MissingCsvHeaderAttributeWithPositionException FromPropertyInfo(PropertyInfo property)
+		internal static MissingCsvHeaderAttributeWithPositionException FromPropertyInfo(PropertyInfo property)
 		{
 			string message = $"Property '{property.Name}' doesn't have a CsvHeaderAttribute with position.";
 			return new MissingCsvHeaderAttributeWithPositionException(message);
