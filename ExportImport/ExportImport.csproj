@@ -2,8 +2,8 @@
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<RootNamespace>Skyline.DataMiner.Utils.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
-		<AssemblyName>Skyline.DataMiner.Utils.$(MSBuildProjectName.Replace(" ", "_"))</AssemblyName>
+		<RootNamespace>Skyline.DataMiner.Utils.ExportImport</RootNamespace>
+		<AssemblyName>Skyline.DataMiner.Utils.ExportImport</AssemblyName>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
@@ -22,18 +22,9 @@ ReadMe will show how to start.</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Include="..\README.md">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
-	  <None Include="..\Icon.png">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
-	  <None Include="..\LICENSE.txt">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
+	  <None Include="..\README.md" Pack="True" PackagePath="\"/>
+	  <None Include="..\Icon.png" Pack="True" PackagePath="\"/>
+	  <None Include="..\LICENSE.txt" Pack="True" PackagePath="\"/>
 	</ItemGroup>
 
 	<ItemGroup>
