@@ -26,7 +26,6 @@ jobs:
       repository: ${{ github.repository }}
       owner: ${{ github.repository_owner }}
       sonarCloudProjectName: SkylineCommunications_Skyline.DataMiner.Utils.ExportImport
-      # The API-key: generated in the DCP Admin app (https://admin.dataminer.services/) as authentication for a certain DataMiner System.
     secrets:
       sonarCloudToken: ${{ secrets.SONAR_TOKEN }}
       pfx: ${{ secrets.PFX }}
