@@ -12,3 +12,8 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
+    # Beta feature to bundle multiple NuGet changes into one PR.
+    groups:
+      dev-dependencies:
+        patterns:
+          - "MSTest.*"  
