@@ -23,7 +23,7 @@ jobs:
     
       - name: Check if PRs are dirty
       
-        uses: eps1lon/actions-label-merge-conflict@v2.1.0
+        uses: eps1lon/actions-label-merge-conflict@v3.0.0
         with:
           dirtyLabel: "Conflict"
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
